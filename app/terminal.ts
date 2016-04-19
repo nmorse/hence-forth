@@ -10,7 +10,8 @@ import {Component, Output, Input, EventEmitter} from 'angular2/core';
              placeholder="hence-FORTH type code here">
       <input class="btn-primary" type="submit" value="Enter">
     </form>
-    <p>error message if any is {{stdError}}</p>
+    <p>standard output:<span style="color:green;"> {{stdOut}}</span></p>
+    <p>error message:<span style="color:red;"> {{stdError}}</span></p>
     `
 })
 export class Terminal {

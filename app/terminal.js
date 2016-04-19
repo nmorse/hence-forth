@@ -43,7 +43,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 Terminal = __decorate([
                     core_1.Component({
                         selector: 'terminal',
-                        template: "\n    <form (ngSubmit)=\"Enter()\">\n\n      <input type=\"text\" [(ngModel)]=\"code\" size=\"30\"\n             placeholder=\"hence-FORTH type code here\">\n      <input class=\"btn-primary\" type=\"submit\" value=\"Enter\">\n    </form>\n    <p>error message if any is {{stdError}}</p>\n    "
+                        template: "\n    <form (ngSubmit)=\"Enter()\">\n\n      <input type=\"text\" [(ngModel)]=\"code\" size=\"30\"\n             placeholder=\"hence-FORTH type code here\">\n      <input class=\"btn-primary\" type=\"submit\" value=\"Enter\">\n    </form>\n    <p>standard output:<span style=\"color:green;\"> {{stdOut}}</span></p>\n    <p>error message:<span style=\"color:red;\"> {{stdError}}</span></p>\n    "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], Terminal);
