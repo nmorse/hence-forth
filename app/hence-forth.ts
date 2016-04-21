@@ -23,9 +23,9 @@ class Queue {
 }
 
 export class HenceForth {
-  dict: Object;
+  dict: Object = {};
   data: Stack;
-  token: Queue;
+  token: string[] = [];
   parse (input:string) {
     let tokens: string[] = input.split(' ');
     let inStr: boolean = false;
@@ -46,12 +46,15 @@ export class HenceForth {
         t = "";
       }
     }
+    this.token = tokens;
   }
 
   run () {
     let mode:string = 'immediate';
     for(var t in this.token) {
-      if (+t === t * 1) {
+      let ty = typeof t;
+      alert(ty);
+      if (typeof t === 'Number') {
         this.data.push(t);
       }
       else if (t in this.dict) {
@@ -62,7 +65,7 @@ export class HenceForth {
         this.token.shove(t);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
-        
+
       }
     }
   }

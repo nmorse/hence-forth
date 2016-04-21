@@ -1,4 +1,4 @@
-System.register(['angular2/core', './terminal'], function(exports_1, context_1) {
+System.register(['angular2/core', './terminal', './hence-forth'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './terminal'], function(exports_1, context_1) 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, terminal_1;
+    var core_1, terminal_1, hence_forth_1;
     var AppComponent;
     return {
         setters:[
@@ -19,15 +19,20 @@ System.register(['angular2/core', './terminal'], function(exports_1, context_1) 
             },
             function (terminal_1_1) {
                 terminal_1 = terminal_1_1;
+            },
+            function (hence_forth_1_1) {
+                hence_forth_1 = hence_forth_1_1;
             }],
         execute: function() {
-            //import {StackView}  from './stack-view';
             AppComponent = (function () {
                 function AppComponent() {
+                    this.hf_interp = new hence_forth_1.HenceForth();
                     this.errorMessage = 'This is a test of the error message system, if this was an actual error... this is only a test';
                 }
                 AppComponent.prototype.run = function ($event) {
                     this.current_code = $event;
+                    this.hf_interp.parse(this.current_code);
+                    this.hf_interp.run();
                     this.errorMessage = '';
                     this.hfout = 'test';
                 };

@@ -1,5 +1,6 @@
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
     "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Stack, Queue, HenceForth;
     return {
         setters:[],
@@ -14,7 +15,7 @@ System.register([], function(exports_1) {
                     return this.stack.pop();
                 };
                 return Stack;
-            })();
+            }());
             Queue = (function () {
                 function Queue() {
                 }
@@ -28,9 +29,11 @@ System.register([], function(exports_1) {
                     this.q.push(art);
                 };
                 return Queue;
-            })();
+            }());
             HenceForth = (function () {
                 function HenceForth() {
+                    this.dict = {};
+                    this.token = [];
                 }
                 HenceForth.prototype.parse = function (input) {
                     var tokens = input.split(' ');
@@ -52,11 +55,14 @@ System.register([], function(exports_1) {
                             t = "";
                         }
                     }
+                    this.token = tokens;
                 };
                 HenceForth.prototype.run = function () {
                     var mode = 'immediate';
                     for (var t in this.token) {
-                        if (+t === t * 1) {
+                        var ty = typeof t;
+                        alert(ty);
+                        if (typeof t === 'Number') {
                             this.data.push(t);
                         }
                         else if (t in this.dict) {
@@ -69,7 +75,7 @@ System.register([], function(exports_1) {
                     }
                 };
                 return HenceForth;
-            })();
+            }());
             exports_1("HenceForth", HenceForth);
         }
     }
