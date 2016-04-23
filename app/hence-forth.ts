@@ -1,7 +1,7 @@
 
 
 class Stack {
-  stack: Array<string>;
+  stack: string[] = [];
   push (art) {
     this.stack.push(art);
   }
@@ -54,7 +54,7 @@ export class HenceForth {
     for(var t in this.token) {
       let ty = typeof t;
       alert(ty);
-      if (typeof t === 'Number') {
+      if (typeof +t === 'number') {
         this.data.push(t);
       }
       else if (t in this.dict) {
@@ -62,7 +62,8 @@ export class HenceForth {
         //     call it
         // if this.dict[t] is an array
         //     shove it on the token list
-        this.token.shove(t);
+        this.token.push(t);
+        console.log(this.token);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 

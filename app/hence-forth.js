@@ -7,6 +7,7 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             Stack = (function () {
                 function Stack() {
+                    this.stack = [];
                 }
                 Stack.prototype.push = function (art) {
                     this.stack.push(art);
@@ -62,7 +63,7 @@ System.register([], function(exports_1, context_1) {
                     for (var t in this.token) {
                         var ty = typeof t;
                         alert(ty);
-                        if (typeof t === 'Number') {
+                        if (typeof +t === 'number') {
                             this.data.push(t);
                         }
                         else if (t in this.dict) {
@@ -70,7 +71,8 @@ System.register([], function(exports_1, context_1) {
                             //     call it
                             // if this.dict[t] is an array
                             //     shove it on the token list
-                            this.token.shove(t);
+                            this.token.push(t);
+                            console.log(this.token);
                         }
                     }
                 };
