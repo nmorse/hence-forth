@@ -21,7 +21,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
             Terminal = (function () {
                 function Terminal() {
                     this.stdIn = new core_1.EventEmitter();
-                    this.code = 'hhhdd';
+                    this.code = '33';
                 }
                 Terminal.prototype.Enter = function () {
                     if (this.code) {

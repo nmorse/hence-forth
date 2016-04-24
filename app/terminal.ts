@@ -16,7 +16,7 @@ import {Component, Output, Input, EventEmitter} from 'angular2/core';
 })
 export class Terminal {
   @Output() stdIn = new EventEmitter<string>();
-  code: string = 'hhhdd';
+  code: string = '33';
 
   @Input() stdOut: string;
   @Input() stdError: string;

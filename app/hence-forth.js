@@ -34,6 +34,7 @@ System.register([], function(exports_1, context_1) {
             HenceForth = (function () {
                 function HenceForth() {
                     this.dict = {};
+                    this.data = new Stack();
                     this.token = [];
                 }
                 HenceForth.prototype.parse = function (input) {
@@ -61,18 +62,19 @@ System.register([], function(exports_1, context_1) {
                 HenceForth.prototype.run = function () {
                     var mode = 'immediate';
                     for (var t in this.token) {
-                        var ty = typeof t;
+                        var this_t = this.token[t];
+                        var ty = typeof this_t;
                         alert(ty);
-                        if (typeof +t === 'number') {
-                            this.data.push(t);
+                        if (typeof +this_t === 'number') {
+                            this.data.push(this_t);
                         }
                         else if (t in this.dict) {
                             // if this.dict[t] is a function
                             //     call it
                             // if this.dict[t] is an array
                             //     shove it on the token list
-                            this.token.push(t);
-                            console.log(this.token);
+                            this.token.push(this_t);
+                            console.log(this_t);
                         }
                     }
                 };
