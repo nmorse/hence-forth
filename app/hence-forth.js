@@ -64,16 +64,16 @@ System.register([], function(exports_1, context_1) {
                     for (var t in this.token) {
                         var this_t = this.token[t];
                         var ty = typeof this_t;
-                        alert(ty);
+                        //alert(ty);
                         if (typeof +this_t === 'number') {
                             this.data.push(this_t);
                         }
-                        else if (t in this.dict) {
+                        else if (this_t in this.dict) {
                             // if this.dict[t] is a function
                             //     call it
                             // if this.dict[t] is an array
                             //     shove it on the token list
-                            this.token.push(this_t);
+                            this.token.push(this.dict[this_t]);
                             console.log(this_t);
                         }
                     }
