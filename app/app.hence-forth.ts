@@ -10,7 +10,8 @@ import {StackView}  from './hf-stack-viewer';
     <p>A browser-based <em>modified</em> FORTH programming language interpretor, with an eye to the future, and nod to the past.</p>
     <terminal (stdIn)="run($event)" [stdOut]="hfout" [stdError]="errorMessage">terminal is loading...</terminal>
     <p>outer code is {{current_code}}
-    <hf-stack-view [stack]="hf_interp.data.stack"> </hf-stack-view>
+    <hf-stack-view title="DS" [stack]="hf_interp.data.stack"></hf-stack-view>
+    <hf-stack-view title="TQ" [stack]="hf_interp.token.q"></hf-stack-view>
     `,
     directives: [Terminal, StackView]
 })
@@ -19,7 +20,6 @@ export class AppComponent {
   errorMessage: string = 'This is a test of the error message system, if this was an actual error... this is only a test';
   current_code: string;
   hfout: string;
-  testStack: string[] = [];
   run ($event) {
     this.current_code = $event;
     this.hf_interp.parse(this.current_code);

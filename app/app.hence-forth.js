@@ -31,7 +31,6 @@ System.register(['angular2/core', './terminal', './hence-forth', './hf-stack-vie
                 function AppComponent() {
                     this.hf_interp = new hence_forth_1.HenceForth();
                     this.errorMessage = 'This is a test of the error message system, if this was an actual error... this is only a test';
-                    this.testStack = [];
                 }
                 AppComponent.prototype.run = function ($event) {
                     this.current_code = $event;
@@ -44,7 +43,7 @@ System.register(['angular2/core', './terminal', './hence-forth', './hf-stack-vie
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'hf-app',
-                        template: "<h1>hence-FORTH</h1>\n    <p>A browser-based <em>modified</em> FORTH programming language interpretor, with an eye to the future, and nod to the past.</p>\n    <terminal (stdIn)=\"run($event)\" [stdOut]=\"hfout\" [stdError]=\"errorMessage\">terminal is loading...</terminal>\n    <p>outer code is {{current_code}}\n    <hf-stack-view [stack]=\"hf_interp.data.stack\"> </hf-stack-view>\n    ",
+                        template: "<h1>hence-FORTH</h1>\n    <p>A browser-based <em>modified</em> FORTH programming language interpretor, with an eye to the future, and nod to the past.</p>\n    <terminal (stdIn)=\"run($event)\" [stdOut]=\"hfout\" [stdError]=\"errorMessage\">terminal is loading...</terminal>\n    <p>outer code is {{current_code}}\n    <hf-stack-view title=\"DS\" [stack]=\"hf_interp.data.stack\"></hf-stack-view>\n    <hf-stack-view title=\"TQ\" [stack]=\"hf_interp.token.q\"></hf-stack-view>\n    ",
                         directives: [terminal_1.Terminal, hf_stack_viewer_1.StackView]
                     }), 
                     __metadata('design:paramtypes', [])

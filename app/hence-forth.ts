@@ -10,52 +10,63 @@ class Stack {
   }
 }
 class Queue {
-  q: Array<string>;
+  q: string[] = [];
   add (art) {
-    this.q.unshift(art);
+    this.q.push(art);
   }
   remove () {
-    return this.q.pop();
+    return this.q.shift();
   }
   shove (art) {
-    this.q.push(art);
+    this.q.unshift(art);
   }
 }
 
 export class HenceForth {
   dict: Object = {};
   data: Stack = new Stack();
-  token: string[] = [];
+  token: Queue = new Queue();
   parse (input:string) {
+    this.token = new Queue();
     let tokens: string[] = input.split(' ');
     let inStr: boolean = false;
     let s:string = "";
-    for(var t in tokens) {
+    for(var t of tokens) {
       let l = t.length;
       if (inStr) {
-        s += t;
-        t = "";
+        s += ' '+t;
         if (t.charAt(l - 1) === '"') {
           inStr = false;
-          t = s;
+          this.token.add(s);
+          s = '';
         }
       }
-      if (t.charAt(0) === '"') {
+      else if (t.charAt(0) === '"') {
         inStr = true;
         s = t;
-        t = "";
+        if (l >= 2 && t.charAt(l - 1) === '"') {
+          inStr = false;
+          this.token.add(s);
+          s = '';
+        }
+      }
+      else {
+        this.token.add(t);
       }
     }
-    this.token = tokens;
   }
 
   run () {
     let mode:string = 'immediate';
-    for(var t in this.token) {
-      let this_t = this.token[t];
-      let ty = typeof this_t;
-      //alert(ty);
-      if (typeof +this_t === 'number') {
+    let this_t = '';
+    while(this_t = this.token.remove()) {
+      var as_int = parseInt(this_t, 10);
+      if (as_int && as_int+'' === this_t) {
+        this.data.push(this_t);
+      }
+      else if (this.isString(this_t)) {
+        // clean the double quotes
+        this_t = this_t.slice(1,-1);
         this.data.push(this_t);
       }
       else if (this_t in this.dict) {
@@ -63,12 +74,19 @@ export class HenceForth {
         //     call it
         // if this.dict[t] is an array
         //     shove it on the token list
-        this.token.push(this.dict[this_t]);
+        this.token.shove(this.dict[this_t]);
         console.log(this_t);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 
       }
     }
+  }
+  isString(s) {
+    let l = s.length;
+    if (l >= 2 && s.charAt(0) === '"' && s.charAt(l - 1) === '"') {
+      return true;
+    }
+    return false;
   }
 }

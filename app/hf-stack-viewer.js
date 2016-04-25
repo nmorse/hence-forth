@@ -23,6 +23,10 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 }
                 __decorate([
                     core_1.Input(), 
+                    __metadata('design:type', String)
+                ], StackView.prototype, "title", void 0);
+                __decorate([
+                    core_1.Input(), 
                     __metadata('design:type', Array)
                 ], StackView.prototype, "stack", void 0);
                 StackView = __decorate([
@@ -30,7 +34,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                         selector: 'hf-stack-view',
                         styles: ["\n    .data-item {\n      color: green;\n    }"
                         ],
-                        template: "\n  Stack View:\n    <ul class=\"list-unstyled\">\n      <li *ngFor=\"#s_item of stack\">\n        <span>{{s_item}}</span>\n      </li>\n    </ul>"
+                        template: "\n  {{title}}:\n    <ul class=\"list-unstyled\">\n      <li *ngFor=\"#s_item of stack\">\n        <span>{{s_item}}</span>\n      </li>\n    </ul>"
                     }), 
                     __metadata('design:paramtypes', [])
                 ], StackView);

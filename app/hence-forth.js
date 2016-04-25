@@ -19,15 +19,16 @@ System.register([], function(exports_1, context_1) {
             }());
             Queue = (function () {
                 function Queue() {
+                    this.q = [];
                 }
                 Queue.prototype.add = function (art) {
-                    this.q.unshift(art);
+                    this.q.push(art);
                 };
                 Queue.prototype.remove = function () {
-                    return this.q.pop();
+                    return this.q.shift();
                 };
                 Queue.prototype.shove = function (art) {
-                    this.q.push(art);
+                    this.q.unshift(art);
                 };
                 return Queue;
             }());
@@ -35,37 +36,49 @@ System.register([], function(exports_1, context_1) {
                 function HenceForth() {
                     this.dict = {};
                     this.data = new Stack();
-                    this.token = [];
+                    this.token = new Queue();
                 }
                 HenceForth.prototype.parse = function (input) {
+                    this.token = new Queue();
                     var tokens = input.split(' ');
                     var inStr = false;
                     var s = "";
-                    for (var t in tokens) {
+                    for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
+                        var t = tokens_1[_i];
                         var l = t.length;
                         if (inStr) {
-                            s += t;
-                            t = "";
+                            s += ' ' + t;
                             if (t.charAt(l - 1) === '"') {
                                 inStr = false;
-                                t = s;
+                                this.token.add(s);
+                                s = '';
                             }
                         }
-                        if (t.charAt(0) === '"') {
+                        else if (t.charAt(0) === '"') {
                             inStr = true;
                             s = t;
-                            t = "";
+                            if (l >= 2 && t.charAt(l - 1) === '"') {
+                                inStr = false;
+                                this.token.add(s);
+                                s = '';
+                            }
+                        }
+                        else {
+                            this.token.add(t);
                         }
                     }
-                    this.token = tokens;
                 };
                 HenceForth.prototype.run = function () {
                     var mode = 'immediate';
-                    for (var t in this.token) {
-                        var this_t = this.token[t];
-                        var ty = typeof this_t;
-                        //alert(ty);
-                        if (typeof +this_t === 'number') {
+                    var this_t = '';
+                    while (this_t = this.token.remove()) {
+                        var as_int = parseInt(this_t, 10);
+                        if (as_int && as_int + '' === this_t) {
+                            this.data.push(this_t);
+                        }
+                        else if (this.isString(this_t)) {
+                            // clean the double quotes
+                            this_t = this_t.slice(1, -1);
                             this.data.push(this_t);
                         }
                         else if (this_t in this.dict) {
@@ -73,10 +86,17 @@ System.register([], function(exports_1, context_1) {
                             //     call it
                             // if this.dict[t] is an array
                             //     shove it on the token list
-                            this.token.push(this.dict[this_t]);
+                            this.token.shove(this.dict[this_t]);
                             console.log(this_t);
                         }
                     }
+                };
+                HenceForth.prototype.isString = function (s) {
+                    var l = s.length;
+                    if (l >= 2 && s.charAt(0) === '"' && s.charAt(l - 1) === '"') {
+                        return true;
+                    }
+                    return false;
                 };
                 return HenceForth;
             }());
