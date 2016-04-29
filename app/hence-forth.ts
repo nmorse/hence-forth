@@ -1,4 +1,4 @@
-
+import {isFunction} from 'angular2/src/facade/lang';
 
 class Stack {
   stack: string[] = [];
@@ -23,7 +23,13 @@ class Queue {
 }
 
 export class HenceForth {
-  dict: Object = {};
+  dict: Object = {
+    "+": function() {
+      let a = this.data.pop();
+      let b = this.data.pop();
+      this.data.push(a+b);
+    }
+  };
   data: Stack = new Stack();
   token: Queue = new Queue();
   parse (input:string) {
@@ -58,11 +64,24 @@ export class HenceForth {
 
   run () {
     let mode:string = 'immediate';
+    let hf_item = {name:'', words:[]};
     let this_t = '';
     while(this_t = this.token.remove()) {
-      var as_int = parseInt(this_t, 10);
-      if (as_int && as_int+'' === this_t) {
-        this.data.push(this_t);
+      if (this_t === ':') {
+        hf_item.name = this.token.remove();
+        hf_item.words = [];
+        mode = 'parse';
+      }
+      else if (this_t === ';') {
+        this.dict[hf_item.name] = hf_item.words;
+        mode = 'immediate';
+      }
+      else if (mode === 'parse') {
+        hf_item.words.push(this_t);
+      }
+      // from here on it's immediate mode.
+      else if (this.isNumeric(this_t)) {
+        this.data.push(+this_t);
       }
       else if (this.isString(this_t)) {
         // clean the double quotes
@@ -70,17 +89,23 @@ export class HenceForth {
         this.data.push(this_t);
       }
       else if (this_t in this.dict) {
-        // if this.dict[t] is a function
-        //     call it
-        // if this.dict[t] is an array
-        //     shove it on the token list
-        this.token.shove(this.dict[this_t]);
+        if (isFunction(this.dict[this_t])) {
+            this.dict[this_t].call(this);
+        }
+        // if this.dict[t] is an array, number or string
+        else {
+          this.token.shove(this.dict[this_t]);
+        }
         console.log(this_t);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 
       }
     }
+  }
+  isNumeric(str_or_num) {
+    var dataPattern = new RegExp('^[-+]?[0-9]+\.?[0-9]*$');
+    return dataPattern.test(''+str_or_num);
   }
   isString(s) {
     let l = s.length;
