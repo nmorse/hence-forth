@@ -9,6 +9,53 @@ class Stack {
     return this.stack.pop();
   }
 }
+
+class Queue2 {
+  queue:any[] = [];
+  offset:number = 0;
+
+  add (item) {
+    this.queue.push(item);
+  }
+
+  remove () {
+    let len = this.queue.length;
+    if (len === 0) {
+      return undefined;
+    }
+
+    let item = this.queue[this.offset];
+
+    // increment offset, remove the free space
+    this.offset += 1;
+    if (this.offset * 2 >= len) {
+      this.queue  = this.queue.slice(this.offset);
+      this.offset = 0;
+    }
+    return item;
+  }
+  shove (art) {
+    for (var a in art) {
+      this.press(a);
+    }
+  }
+  press (art) {
+    if (this.offset > 0) {
+      this.offset -= 1;
+      this.queue[this.offset] = art;
+    }
+    else {
+      this.queue.unshift(art);
+    }
+  }
+  getLength () {
+    return (this.queue.length - this.offset);
+  }
+  isEmpty () {
+    return (this.queue.length == 0);
+  }
+}
+
 class Queue {
   q: string[] = [];
   add (art) {
@@ -27,13 +74,28 @@ export class HenceForth {
     "+": function() {
       let a = this.data.pop();
       let b = this.data.pop();
-      this.data.push(a+b);
+      this.data.push(b+a);
+    },
+    "-": function() {
+      let a = this.data.pop();
+      let b = this.data.pop();
+      this.data.push(b-a);
+    },
+    "*": function() {
+      let a = this.data.pop();
+      let b = this.data.pop();
+      this.data.push(b*a);
+    },
+    "/": function() {
+      let a = this.data.pop();
+      let b = this.data.pop();
+      this.data.push(b/a);
     }
   };
   data: Stack = new Stack();
-  token: Queue = new Queue();
+  token: Queue2 = new Queue2();
   parse (input:string) {
-    this.token = new Queue();
+    this.token = new Queue2();
     let tokens: string[] = input.split(' ');
     let inStr: boolean = false;
     let s:string = "";

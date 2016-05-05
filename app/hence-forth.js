@@ -2,7 +2,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var lang_1;
-    var Stack, Queue, HenceForth;
+    var Stack, Queue2, Queue, HenceForth;
     return {
         setters:[
             function (lang_1_1) {
@@ -20,6 +20,50 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return this.stack.pop();
                 };
                 return Stack;
+            }());
+            Queue2 = (function () {
+                function Queue2() {
+                    this.queue = [];
+                    this.offset = 0;
+                }
+                Queue2.prototype.add = function (item) {
+                    this.queue.push(item);
+                };
+                Queue2.prototype.remove = function () {
+                    var len = this.queue.length;
+                    if (len === 0) {
+                        return undefined;
+                    }
+                    var item = this.queue[this.offset];
+                    // increment offset, remove the free space
+                    this.offset += 1;
+                    if (this.offset * 2 >= len) {
+                        this.queue = this.queue.slice(this.offset);
+                        this.offset = 0;
+                    }
+                    return item;
+                };
+                Queue2.prototype.shove = function (art) {
+                    for (var a in art) {
+                        this.press(a);
+                    }
+                };
+                Queue2.prototype.press = function (art) {
+                    if (this.offset > 0) {
+                        this.offset -= 1;
+                        this.queue[this.offset] = art;
+                    }
+                    else {
+                        this.queue.unshift(art);
+                    }
+                };
+                Queue2.prototype.getLength = function () {
+                    return (this.queue.length - this.offset);
+                };
+                Queue2.prototype.isEmpty = function () {
+                    return (this.queue.length == 0);
+                };
+                return Queue2;
             }());
             Queue = (function () {
                 function Queue() {
@@ -42,14 +86,29 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                         "+": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
-                            this.data.push(a + b);
+                            this.data.push(b + a);
+                        },
+                        "-": function () {
+                            var a = this.data.pop();
+                            var b = this.data.pop();
+                            this.data.push(b - a);
+                        },
+                        "*": function () {
+                            var a = this.data.pop();
+                            var b = this.data.pop();
+                            this.data.push(b * a);
+                        },
+                        "/": function () {
+                            var a = this.data.pop();
+                            var b = this.data.pop();
+                            this.data.push(b / a);
                         }
                     };
                     this.data = new Stack();
-                    this.token = new Queue();
+                    this.token = new Queue2();
                 }
                 HenceForth.prototype.parse = function (input) {
-                    this.token = new Queue();
+                    this.token = new Queue2();
                     var tokens = input.split(' ');
                     var inStr = false;
                     var s = "";
