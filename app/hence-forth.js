@@ -44,7 +44,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return item;
                 };
                 Queue2.prototype.shove = function (art) {
-                    for (var a in art) {
+                    for (var _i = 0, art_1 = art; _i < art_1.length; _i++) {
+                        var a = art_1[_i];
                         this.press(a);
                     }
                 };

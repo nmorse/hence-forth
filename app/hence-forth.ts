@@ -35,7 +35,7 @@ class Queue2 {
     return item;
   }
   shove (art) {
-    for (var a in art) {
+    for (var a of art) {
       this.press(a);
     }
   }
