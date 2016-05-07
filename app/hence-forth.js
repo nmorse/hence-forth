@@ -2,7 +2,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var lang_1;
-    var Stack, Queue2, Queue, HenceForth;
+    var Stack, Queue2, Queue, Item, HenceForth;
     return {
         setters:[
             function (lang_1_1) {
@@ -81,9 +81,32 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                 };
                 return Queue;
             }());
+            Item = (function () {
+                function Item() {
+                }
+                return Item;
+            }());
             HenceForth = (function () {
                 function HenceForth() {
+                    this.stdOut = '';
+                    this.stdErr = '';
                     this.dict = {
+                        ".": function () {
+                            this.data = [];
+                        },
+                        ":": function () {
+                            this.user_item.name = this.token.remove();
+                            this.user_item.words = [];
+                            this.immediate = false;
+                        },
+                        ";": function () {
+                            this.dict[this.user_item.name] = this.user_item.words;
+                            this.immediate = true;
+                        },
+                        "see": function () {
+                            var name = this.token.remove();
+                            this.stdOut = ': ' + name + ' ' + this.dict[name].join(' ') + ' ;';
+                        },
                         "+": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
@@ -107,6 +130,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     };
                     this.data = new Stack();
                     this.token = new Queue2();
+                    this.immediate = true;
+                    this.user_item = { name: '', words: [] };
                 }
                 HenceForth.prototype.parse = function (input) {
                     this.token = new Queue2();
@@ -139,38 +164,26 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     }
                 };
                 HenceForth.prototype.run = function () {
-                    var mode = 'immediate';
-                    var hf_item = { name: '', words: [] };
-                    var this_t = '';
-                    while (this_t = this.token.remove()) {
-                        if (this_t === ':') {
-                            hf_item.name = this.token.remove();
-                            hf_item.words = [];
-                            mode = 'parse';
+                    var t = '';
+                    while (t = this.token.remove()) {
+                        if (!this.immediate && t !== ';') {
+                            this.user_item.words.push(t);
                         }
-                        else if (this_t === ';') {
-                            this.dict[hf_item.name] = hf_item.words;
-                            mode = 'immediate';
+                        else if (this.isNumeric(t)) {
+                            this.data.push(+t);
                         }
-                        else if (mode === 'parse') {
-                            hf_item.words.push(this_t);
-                        }
-                        else if (this.isNumeric(this_t)) {
-                            this.data.push(+this_t);
-                        }
-                        else if (this.isString(this_t)) {
+                        else if (this.isString(t)) {
                             // clean the double quotes
-                            this_t = this_t.slice(1, -1);
-                            this.data.push(this_t);
+                            t = t.slice(1, -1);
+                            this.data.push(t);
                         }
-                        else if (this_t in this.dict) {
-                            if (lang_1.isFunction(this.dict[this_t])) {
-                                this.dict[this_t].call(this);
+                        else if (t in this.dict) {
+                            if (lang_1.isFunction(this.dict[t])) {
+                                this.dict[t].call(this);
                             }
                             else {
-                                this.token.shove(this.dict[this_t]);
+                                this.token.shove(this.dict[t]);
                             }
-                            console.log(this_t);
                         }
                     }
                 };
@@ -184,6 +197,16 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                         return true;
                     }
                     return false;
+                };
+                HenceForth.prototype.getStdOut = function () {
+                    var o = this.stdOut;
+                    this.stdOut = '';
+                    return o;
+                };
+                HenceForth.prototype.getStdErr = function () {
+                    var e = this.stdErr;
+                    this.stdErr = '';
+                    return e;
                 };
                 return HenceForth;
             }());

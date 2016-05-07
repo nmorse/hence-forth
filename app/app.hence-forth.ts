@@ -1,4 +1,4 @@
-import {Component, Output, EventEmitter} from 'angular2/core';
+import {Component, Input, Output, EventEmitter} from 'angular2/core';
 import {DictionaryEntry} from './hf-dictionary-entry';
 import {Terminal}  from './terminal';
 import {HenceForth}  from './hence-forth';
@@ -25,7 +25,7 @@ export class AppComponent {
     this.hf_interp.parse(this.current_code);
     this.hf_interp.run();
     //this.testStack = this.hf_interp.data.stack;
-    this.errorMessage = '';
-    this.hfout = 'test';
+    this.errorMessage = this.hf_interp.getStdErr();
+    this.hfout = this.hf_interp.getStdOut();
   }
 }

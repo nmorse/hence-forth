@@ -69,8 +69,31 @@ class Queue {
   }
 }
 
+class Item {
+  name:string;
+  words:string[];
+}
+
 export class HenceForth {
+  stdOut:string = '';
+  stdErr:string = '';
   dict: Object = {
+    ".": function() {
+      this.data = [];
+    },
+    ":": function() {
+      this.user_item.name = this.token.remove();
+      this.user_item.words = [];
+      this.immediate = false;
+    },
+    ";": function() {
+      this.dict[this.user_item.name] = this.user_item.words;
+      this.immediate = true;
+    },
+    "see": function() {
+      let name = this.token.remove();
+      this.stdOut = ': ' + name + ' ' + this.dict[name].join(' ') + ' ;';
+    },
     "+": function() {
       let a = this.data.pop();
       let b = this.data.pop();
@@ -94,6 +117,8 @@ export class HenceForth {
   };
   data: Stack = new Stack();
   token: Queue2 = new Queue2();
+  immediate:boolean = true;
+  user_item:Item = {name:'', words:[]};
   parse (input:string) {
     this.token = new Queue2();
     let tokens: string[] = input.split(' ');
@@ -125,55 +150,54 @@ export class HenceForth {
   }
 
   run () {
-    let mode:string = 'immediate';
-    let hf_item = {name:'', words:[]};
-    let this_t = '';
-    while(this_t = this.token.remove()) {
-      if (this_t === ':') {
-        hf_item.name = this.token.remove();
-        hf_item.words = [];
-        mode = 'parse';
-      }
-      else if (this_t === ';') {
-        this.dict[hf_item.name] = hf_item.words;
-        mode = 'immediate';
-      }
-      else if (mode === 'parse') {
-        hf_item.words.push(this_t);
+    let t = '';
+    while(t = this.token.remove()) {
+      if (!this.immediate && t !== ';') {
+        this.user_item.words.push(t);
       }
       // from here on it's immediate mode.
-      else if (this.isNumeric(this_t)) {
-        this.data.push(+this_t);
+      else if (this.isNumeric(t)) {
+        this.data.push(+t);
       }
-      else if (this.isString(this_t)) {
+      else if (this.isString(t)) {
         // clean the double quotes
-        this_t = this_t.slice(1,-1);
-        this.data.push(this_t);
+        t = t.slice(1,-1);
+        this.data.push(t);
       }
-      else if (this_t in this.dict) {
-        if (isFunction(this.dict[this_t])) {
-            this.dict[this_t].call(this);
+      else if (t in this.dict) {
+        if (isFunction(this.dict[t])) {
+            this.dict[t].call(this);
         }
         // if this.dict[t] is an array, number or string
         else {
-          this.token.shove(this.dict[this_t]);
+          this.token.shove(this.dict[t]);
         }
-        console.log(this_t);
+        //console.log(t);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 
       }
     }
   }
-  isNumeric(str_or_num) {
+  isNumeric (str_or_num) {
     var dataPattern = new RegExp('^[-+]?[0-9]+\.?[0-9]*$');
     return dataPattern.test(''+str_or_num);
   }
-  isString(s) {
+  isString (s) {
     let l = s.length;
     if (l >= 2 && s.charAt(0) === '"' && s.charAt(l - 1) === '"') {
       return true;
     }
     return false;
+  }
+  getStdOut ():string {
+    let o = this.stdOut;
+    this.stdOut = '';
+    return o;
+  }
+  getStdErr ():string {
+    let e = this.stdErr;
+    this.stdErr = '';
+    return e;
   }
 }

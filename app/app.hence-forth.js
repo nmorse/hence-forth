@@ -37,8 +37,8 @@ System.register(['angular2/core', './terminal', './hence-forth', './hf-stack-vie
                     this.hf_interp.parse(this.current_code);
                     this.hf_interp.run();
                     //this.testStack = this.hf_interp.data.stack;
-                    this.errorMessage = '';
-                    this.hfout = 'test';
+                    this.errorMessage = this.hf_interp.getStdErr();
+                    this.hfout = this.hf_interp.getStdOut();
                 };
                 AppComponent = __decorate([
                     core_1.Component({
