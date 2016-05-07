@@ -21,11 +21,10 @@ System.register(['angular2/core'], function(exports_1, context_1) {
             Terminal = (function () {
                 function Terminal() {
                     this.stdIn = new core_1.EventEmitter();
-                    this.code = '33';
                 }
                 Terminal.prototype.Enter = function () {
-                    if (this.code) {
-                        this.stdIn.next(this.code);
+                    if (this.stdOut) {
+                        this.stdIn.next(this.stdOut);
                     }
                 };
                 __decorate([
@@ -43,7 +42,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 Terminal = __decorate([
                     core_1.Component({
                         selector: 'terminal',
-                        template: "\n    <form (ngSubmit)=\"Enter()\">\n\n      <input type=\"text\" [(ngModel)]=\"code\" size=\"30\"\n             placeholder=\"hence-FORTH type code here\">\n      <input class=\"btn-primary\" type=\"submit\" value=\"Enter\">\n    </form>\n    <p>standard output:<span style=\"color:green;\"> {{stdOut}}</span></p>\n    <p>error message:<span style=\"color:red;\"> {{stdError}}</span></p>\n    "
+                        template: "\n    <form (ngSubmit)=\"Enter()\">\n      <input type=\"text\" [(ngModel)]=\"stdOut\" size=\"30\"\n           placeholder=\"type code here (hence-FORTH)\">\n      <input class=\"btn-primary\" type=\"submit\" value=\"Enter\">\n    </form>\n    <p>error message: <span style=\"color:red;\">{{stdError}}</span></p>\n    "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], Terminal);

@@ -9,6 +9,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                 lang_1 = lang_1_1;
             }],
         execute: function() {
+            //import {toJson} from 'angular2/src/';
             Stack = (function () {
                 function Stack() {
                     this.stack = [];
@@ -44,9 +45,11 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return item;
                 };
                 Queue2.prototype.shove = function (art) {
-                    for (var _i = 0, art_1 = art; _i < art_1.length; _i++) {
-                        var a = art_1[_i];
-                        this.press(a);
+                    // press (backpress) every element of art
+                    // on the queue. art is pressed in reverse order
+                    var i = art.length - 1;
+                    for (; i >= 0; i -= 1) {
+                        this.press(art[i]);
                     }
                 };
                 Queue2.prototype.press = function (art) {
@@ -105,8 +108,10 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                         },
                         "see": function () {
                             var name = this.token.remove();
-                            this.stdOut = ': ' + name + ' ' + this.dict[name].join(' ') + ' ;';
+                            var method = lang_1.isFunction(this.dict[name]) ? 'JS_function' : this.dict[name].join(' ');
+                            this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
+                        // : swap @a pop @b pop a push b push ;
                         "+": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
@@ -166,6 +171,9 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                 HenceForth.prototype.run = function () {
                     var t = '';
                     while (t = this.token.remove()) {
+                        // not "immeadiate" mode, means that we are
+                        // in parsing mode
+                        // and the ';' word ends parsing
                         if (!this.immediate && t !== ';') {
                             this.user_item.words.push(t);
                         }
@@ -184,6 +192,9 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             else {
                                 this.token.shove(this.dict[t]);
                             }
+                        }
+                        else {
+                            this.stdErr = 'Unable to interperate Word: ' + t + ' (not found in Dictionary)';
                         }
                     }
                 };

@@ -5,25 +5,22 @@ import {Component, Output, Input, EventEmitter} from 'angular2/core';
   selector: 'terminal',
   template: `
     <form (ngSubmit)="Enter()">
-
-      <input type="text" [(ngModel)]="code" size="30"
-             placeholder="hence-FORTH type code here">
+      <input type="text" [(ngModel)]="stdOut" size="30"
+           placeholder="type code here (hence-FORTH)">
       <input class="btn-primary" type="submit" value="Enter">
     </form>
-    <p>standard output:<span style="color:green;"> {{stdOut}}</span></p>
-    <p>error message:<span style="color:red;"> {{stdError}}</span></p>
+    <p>error message: <span style="color:red;">{{stdError}}</span></p>
     `
 })
 export class Terminal {
   @Output() stdIn = new EventEmitter<string>();
-  code: string = '33';
 
   @Input() stdOut: string;
   @Input() stdError: string;
 
   Enter() {
-    if (this.code) {
-      this.stdIn.next(this.code);
+    if (this.stdOut) {
+      this.stdIn.next(this.stdOut);
     }
   }
 }

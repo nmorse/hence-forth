@@ -1,4 +1,5 @@
 import {isFunction} from 'angular2/src/facade/lang';
+//import {toJson} from 'angular2/src/';
 
 class Stack {
   stack: string[] = [];
@@ -35,8 +36,11 @@ class Queue2 {
     return item;
   }
   shove (art) {
-    for (var a of art) {
-      this.press(a);
+    // press (backpress) every element of art
+    // on the queue. art is pressed in reverse order
+    let i = art.length - 1;
+    for ( ; i >= 0; i -= 1) {
+      this.press(art[i]);
     }
   }
   press (art) {
@@ -92,8 +96,10 @@ export class HenceForth {
     },
     "see": function() {
       let name = this.token.remove();
-      this.stdOut = ': ' + name + ' ' + this.dict[name].join(' ') + ' ;';
+      let method = isFunction(this.dict[name])? 'JS_function' : this.dict[name].join(' ');
+      this.stdOut = ': ' + name + ' ' + method + ' ;';
     },
+    // : swap @a pop @b pop a push b push ;
     "+": function() {
       let a = this.data.pop();
       let b = this.data.pop();
@@ -152,6 +158,9 @@ export class HenceForth {
   run () {
     let t = '';
     while(t = this.token.remove()) {
+      // not "immeadiate" mode, means that we are
+      // in parsing mode
+      // and the ';' word ends parsing
       if (!this.immediate && t !== ';') {
         this.user_item.words.push(t);
       }
@@ -176,6 +185,9 @@ export class HenceForth {
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 
+      }
+      else {
+        this.stdErr = 'Unable to interperate Word: '+ t +' (not found in Dictionary)';
       }
     }
   }
