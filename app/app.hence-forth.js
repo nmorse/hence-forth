@@ -30,20 +30,18 @@ System.register(['angular2/core', './terminal', './hence-forth', './hf-stack-vie
             AppComponent = (function () {
                 function AppComponent() {
                     this.hf_interp = new hence_forth_1.HenceForth();
-                    this.errorMessage = 'This is a test of the error message system, if this was an actual error... this is only a test';
                 }
-                AppComponent.prototype.run = function ($event) {
-                    this.current_code = $event;
-                    this.hf_interp.parse(this.current_code);
+                AppComponent.prototype.run = function (code) {
+                    this.hf_interp.parse(code);
                     this.hf_interp.run();
                     //this.testStack = this.hf_interp.data.stack;
-                    this.errorMessage = this.hf_interp.getStdErr();
-                    this.hfout = this.hf_interp.getStdOut();
+                    this.stdErr = this.hf_interp.getStdErr();
+                    this.stdOut = this.hf_interp.getStdOut();
                 };
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'hf-app',
-                        template: "<h1>hence-FORTH</h1>\n    <p>A browser-based <em>modified</em> FORTH programming language interpretor, with an eye to the future, and nod to the past.</p>\n    <terminal (stdIn)=\"run($event)\" [stdOut]=\"hfout\" [stdError]=\"errorMessage\">terminal is loading...</terminal>\n    <p>outer code is {{current_code}}\n    <hf-stack-view title=\"DS\" [stack]=\"hf_interp.data.stack\"></hf-stack-view>\n    <hf-stack-view title=\"TQ\" [stack]=\"hf_interp.token.q\"></hf-stack-view>\n    ",
+                        template: "<h1>hence-FORTH</h1>\n    <p>A browser-based <em>modified</em> FORTH programming language interpretor, with an eye to the future, and nod to the past.</p>\n    <terminal (stdIn)=\"run($event)\" [stdOut]=\"stdOut\" [stdError]=\"stdErr\">terminal is loading...</terminal>\n\n    <hf-stack-view title=\"DS\" [stack]=\"hf_interp.data.stack\"></hf-stack-view>\n    <hf-stack-view title=\"TQ\" [stack]=\"hf_interp.token.q\"></hf-stack-view>\n    ",
                         directives: [terminal_1.Terminal, hf_stack_viewer_1.StackView]
                     }), 
                     __metadata('design:paramtypes', [])

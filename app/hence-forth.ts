@@ -175,19 +175,25 @@ export class HenceForth {
       }
       else if (t in this.dict) {
         if (isFunction(this.dict[t])) {
-            this.dict[t].call(this);
+          this.dict[t].call(this);
         }
         // if this.dict[t] is an array, number or string
-        else {
+        else if (this.dict[t].length) {
           this.token.shove(this.dict[t]);
+        }
+        else {
+          this.data.push(this.dict[t]);
         }
         //console.log(t);
         // if this.dict[t] is a number, object or string
         //     push it on the data stack
 
       }
+      else if (t[0] === '{' || t[0] === '[') {
+        this.data.push(t);
+      }
       else {
-        this.stdErr = 'Unable to interperate Word: '+ t +' (not found in Dictionary)';
+        this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
       }
     }
   }
