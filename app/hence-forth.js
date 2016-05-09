@@ -94,7 +94,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     this.stdOut = '';
                     this.stdErr = '';
                     this.dict = {
-                        ".": function () {
+                        "clearstack": function () {
                             this.data = [];
                         },
                         ":": function () {
@@ -112,6 +112,19 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
                         // : swap @a pop @b pop a push b push ;
+                        // : a {x:5} ; a x .
+                        ".": function () {
+                            var a = this.data.pop();
+                            var b = this.data.pop();
+                            if (!this.isObject(b)) {
+                                b = JSON.parse(b);
+                            }
+                            this.data.push(b[a]);
+                        },
+                        "toJson": function () {
+                            var b = JSON.parse(this.data.pop());
+                            this.data.push(b);
+                        },
                         "+": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
@@ -200,7 +213,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             this.data.push(t);
                         }
                         else {
-                            this.stdErr = 'Unable to decypher the word: <strong>' + t + '</strong> (it was not found in the hF dictionary)';
+                            //this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
+                            this.data.push(t);
                         }
                     }
                 };
@@ -214,6 +228,9 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                         return true;
                     }
                     return false;
+                };
+                HenceForth.prototype.isObject = function (o) {
+                    return (typeof o === 'object');
                 };
                 HenceForth.prototype.getStdOut = function () {
                     var o = this.stdOut;

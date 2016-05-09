@@ -82,7 +82,7 @@ export class HenceForth {
   stdOut:string = '';
   stdErr:string = '';
   dict: Object = {
-    ".": function() {
+    "clearstack": function() {
       this.data = [];
     },
     ":": function() {
@@ -100,6 +100,20 @@ export class HenceForth {
       this.stdOut = ': ' + name + ' ' + method + ' ;';
     },
     // : swap @a pop @b pop a push b push ;
+
+    // : a {x:5} ; a x .
+    ".": function() {
+      let a = this.data.pop();
+      let b = this.data.pop();
+      if (!this.isObject(b)) {
+        b = JSON.parse(b);
+      }
+      this.data.push(b[a]);
+    },
+    "toJson": function() {
+      let b = JSON.parse(this.data.pop());
+      this.data.push(b);
+    },
     "+": function() {
       let a = this.data.pop();
       let b = this.data.pop();
@@ -193,7 +207,8 @@ export class HenceForth {
         this.data.push(t);
       }
       else {
-        this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
+        //this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
+        this.data.push(t);
       }
     }
   }
@@ -207,6 +222,9 @@ export class HenceForth {
       return true;
     }
     return false;
+  }
+  isObject(o) {
+    return (typeof o === 'object');
   }
   getStdOut ():string {
     let o = this.stdOut;
