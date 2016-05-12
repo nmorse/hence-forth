@@ -60,19 +60,6 @@ class Queue2 {
   }
 }
 
-class Queue {
-  q: string[] = [];
-  add (art) {
-    this.q.push(art);
-  }
-  remove () {
-    return this.q.shift();
-  }
-  shove (art) {
-    this.q.unshift(art);
-  }
-}
-
 class Item {
   name:string;
   words:string[];
@@ -100,8 +87,27 @@ export class HenceForth {
       this.stdOut = ': ' + name + ' ' + method + ' ;';
     },
     // : swap @a pop @b pop a push b push ;
+    // : swap @a pop @b pop #a push #b push ; ***
+    // : swap @ a pop @ b pop # a push # b push ; **
+    // : swap a @ pop b @ pop a # push b # push ;
+    "pop": function() {
+      let a = this.data.pop();
+      this.local_dict[this.local_var] = a;
+    },
+    "push": function() {
+      let a = this.local_dict[this.local_var];
+      this.data.push(a);
+    },
+    "@": function() {
+      let var_name = this.token.remove();
+      this.local_var = var_name;
+    },
+    "#": function() {
+      let var_name = this.token.remove();
+      this.local_var = var_name;
+    },
 
-    // : a {x:5} ; a x .
+    // : a {x:5} ; a x . yeilds 5
     ".": function() {
       let a = this.data.pop();
       let b = this.data.pop();
@@ -135,6 +141,8 @@ export class HenceForth {
       this.data.push(b/a);
     }
   };
+  local_dict: Object = {};
+  local_var: string = "temp_var_name";
   data: Stack = new Stack();
   token: Queue2 = new Queue2();
   immediate:boolean = true;

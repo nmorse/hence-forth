@@ -2,7 +2,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var lang_1;
-    var Stack, Queue2, Queue, Item, HenceForth;
+    var Stack, Queue2, Item, HenceForth;
     return {
         setters:[
             function (lang_1_1) {
@@ -69,21 +69,6 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                 };
                 return Queue2;
             }());
-            Queue = (function () {
-                function Queue() {
-                    this.q = [];
-                }
-                Queue.prototype.add = function (art) {
-                    this.q.push(art);
-                };
-                Queue.prototype.remove = function () {
-                    return this.q.shift();
-                };
-                Queue.prototype.shove = function (art) {
-                    this.q.unshift(art);
-                };
-                return Queue;
-            }());
             Item = (function () {
                 function Item() {
                 }
@@ -112,7 +97,26 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
                         // : swap @a pop @b pop a push b push ;
-                        // : a {x:5} ; a x .
+                        // : swap @a pop @b pop #a push #b push ; ***
+                        // : swap @ a pop @ b pop # a push # b push ; **
+                        // : swap a @ pop b @ pop a # push b # push ;
+                        "pop": function () {
+                            var a = this.data.pop();
+                            this.local_dict[this.local_var] = a;
+                        },
+                        "push": function () {
+                            var a = this.local_dict[this.local_var];
+                            this.data.push(a);
+                        },
+                        "@": function () {
+                            var var_name = this.token.remove();
+                            this.local_var = var_name;
+                        },
+                        "#": function () {
+                            var var_name = this.token.remove();
+                            this.local_var = var_name;
+                        },
+                        // : a {x:5} ; a x . yeilds 5
                         ".": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
@@ -146,6 +150,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             this.data.push(b / a);
                         }
                     };
+                    this.local_dict = {};
+                    this.local_var = "temp_var_name";
                     this.data = new Stack();
                     this.token = new Queue2();
                     this.immediate = true;
