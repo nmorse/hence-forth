@@ -1,6 +1,5 @@
-System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
+System.register(['angular2/src/facade/lang'], function(exports_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var lang_1;
     var Stack, Queue2, Item, HenceForth;
     return {
@@ -21,7 +20,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return this.stack.pop();
                 };
                 return Stack;
-            }());
+            })();
             Queue2 = (function () {
                 function Queue2() {
                     this.queue = [];
@@ -68,19 +67,19 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return (this.queue.length == 0);
                 };
                 return Queue2;
-            }());
+            })();
             Item = (function () {
                 function Item() {
                 }
                 return Item;
-            }());
+            })();
             HenceForth = (function () {
                 function HenceForth() {
                     this.stdOut = '';
                     this.stdErr = '';
                     this.dict = {
                         "clearstack": function () {
-                            this.data = [];
+                            this.data = new Stack();
                         },
                         ":": function () {
                             this.user_item.name = this.token.remove();
@@ -96,10 +95,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                             var method = lang_1.isFunction(this.dict[name]) ? 'JS_function' : this.dict[name].join(' ');
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
-                        // : swap @a pop @b pop a push b push ;
                         // : swap @a pop @b pop #a push #b push ; ***
                         // : swap @ a pop @ b pop # a push # b push ; **
-                        // : swap a @ pop b @ pop a # push b # push ;
                         "pop": function () {
                             var a = this.data.pop();
                             this.local_dict[this.local_var] = a;
@@ -249,7 +246,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                     return e;
                 };
                 return HenceForth;
-            }());
+            })();
             exports_1("HenceForth", HenceForth);
         }
     }

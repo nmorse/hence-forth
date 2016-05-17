@@ -70,7 +70,7 @@ export class HenceForth {
   stdErr:string = '';
   dict: Object = {
     "clearstack": function() {
-      this.data = [];
+      this.data  = new Stack();
     },
     ":": function() {
       this.user_item.name = this.token.remove();
@@ -86,10 +86,9 @@ export class HenceForth {
       let method = isFunction(this.dict[name])? 'JS_function' : this.dict[name].join(' ');
       this.stdOut = ': ' + name + ' ' + method + ' ;';
     },
-    // : swap @a pop @b pop a push b push ;
+
     // : swap @a pop @b pop #a push #b push ; ***
     // : swap @ a pop @ b pop # a push # b push ; **
-    // : swap a @ pop b @ pop a # push b # push ;
     "pop": function() {
       let a = this.data.pop();
       this.local_dict[this.local_var] = a;
