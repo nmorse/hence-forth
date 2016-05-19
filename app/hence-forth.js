@@ -212,11 +212,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                                 this.data.push(this.dict[t]);
                             }
                         }
-                        else if (t[0] === '{' || t[0] === '[') {
-                            this.data.push(t);
-                        }
                         else {
-                            //this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
+                            // everything else goes on the stack
                             this.data.push(t);
                         }
                     }

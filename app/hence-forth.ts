@@ -210,11 +210,8 @@ export class HenceForth {
         //     push it on the data stack
 
       }
-      else if (t[0] === '{' || t[0] === '[') {
-        this.data.push(t);
-      }
       else {
-        //this.stdErr = 'Unable to decypher the word: <strong>'+ t +'</strong> (it was not found in the hF dictionary)';
+        // everything else goes on the stack
         this.data.push(t);
       }
     }
