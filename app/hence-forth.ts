@@ -14,6 +14,9 @@ class Stack {
 class Queue2 {
   queue:any[] = [];
   offset:number = 0;
+  Queue2(arr) {
+    this.queue = arr;
+  }
 
   add (item) {
     this.queue.push(item);
@@ -148,11 +151,20 @@ export class HenceForth {
   user_item:Item = {name:'', words:[]};
   parse (input:string) {
     this.token = new Queue2();
-    let tokens: string[] = input.split(' ');
+    let input_tokens = new Queue2(input.split(' '))//: string[] = input.split(' ');
     let inStr: boolean = false;
     let s:string = "";
-    for(var t of tokens) {
+    let t;
+    while(t = this.input_tokens.remove()) {
       let l = t.length;
+      if (l > 1) {
+        // check for condenced chars that should be split
+        let result
+        if (result = this.decondence(t)) {
+          t = result[0];
+          input_tokens.press(result[1]);
+        }
+      }
       if (inStr) {
         s += ' '+t;
         if (t.charAt(l - 1) === '"') {
@@ -175,7 +187,14 @@ export class HenceForth {
       }
     }
   }
-
+  decondence (t:string) {
+    let result = false;
+     if (t.charAt(0) === '@' || t.charAt(0) === ':') {
+       result[0] = t.charAt(0);
+       result[1] = t.substr(1);
+     }
+     return result;
+  }
   run () {
     let t = '';
     while(t = this.token.remove()) {
@@ -205,10 +224,6 @@ export class HenceForth {
         else {
           this.data.push(this.dict[t]);
         }
-        //console.log(t);
-        // if this.dict[t] is a number, object or string
-        //     push it on the data stack
-
       }
       else {
         // everything else goes on the stack

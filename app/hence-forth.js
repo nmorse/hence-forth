@@ -26,6 +26,9 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     this.queue = [];
                     this.offset = 0;
                 }
+                Queue2.prototype.Queue2 = function (arr) {
+                    this.queue = arr;
+                };
                 Queue2.prototype.add = function (item) {
                     this.queue.push(item);
                 };
@@ -156,12 +159,20 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                 }
                 HenceForth.prototype.parse = function (input) {
                     this.token = new Queue2();
-                    var tokens = input.split(' ');
+                    var input_tokens = new Queue2(input.split(' ')); //: string[] = input.split(' ');
                     var inStr = false;
                     var s = "";
-                    for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
-                        var t = tokens_1[_i];
+                    var t;
+                    while (t = this.input_tokens.remove()) {
                         var l = t.length;
+                        if (l > 1) {
+                            // check for condenced chars that should be split
+                            var result = void 0;
+                            if (result = this.decondence(t)) {
+                                t = result[0];
+                                input_tokens.press(result[1]);
+                            }
+                        }
                         if (inStr) {
                             s += ' ' + t;
                             if (t.charAt(l - 1) === '"') {
@@ -183,6 +194,14 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                             this.token.add(t);
                         }
                     }
+                };
+                HenceForth.prototype.decondence = function (t) {
+                    var result = false;
+                    if (t.charAt(0) === '@' || t.charAt(0) === ':') {
+                        result[0] = t.charAt(0);
+                        result[1] = t.substr(1);
+                    }
+                    return result;
                 };
                 HenceForth.prototype.run = function () {
                     var t = '';
