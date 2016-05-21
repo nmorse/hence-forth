@@ -19,6 +19,7 @@ export class AppComponent {
   hf_interp:HenceForth = new HenceForth();
   stdError: string;
   stdOut: string;
+  
   run (code) {
     this.hf_interp.parse(code);
     this.hf_interp.run();

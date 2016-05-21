@@ -26,7 +26,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     this.queue = [];
                     this.offset = 0;
                 }
-                Queue2.prototype.Queue2 = function (arr) {
+                Queue2.prototype.setQ = function (arr) {
                     this.queue = arr;
                 };
                 Queue2.prototype.add = function (item) {
@@ -99,7 +99,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
                         // : swap @a pop @b pop #a push #b push ; ***
-                        // : swap @ a pop @ b pop # a push # b push ; **
+                        "swap": ["@", "a", "pop", "@", "b", "pop", "#", "a", "push", "#", "b", "push"],
                         "pop": function () {
                             var a = this.data.pop();
                             this.local_dict[this.local_var] = a;
@@ -109,10 +109,6 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                             this.data.push(a);
                         },
                         "@": function () {
-                            var var_name = this.token.remove();
-                            this.local_var = var_name;
-                        },
-                        "#": function () {
                             var var_name = this.token.remove();
                             this.local_var = var_name;
                         },
@@ -159,11 +155,12 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                 }
                 HenceForth.prototype.parse = function (input) {
                     this.token = new Queue2();
-                    var input_tokens = new Queue2(input.split(' ')); //: string[] = input.split(' ');
+                    var input_tokens = new Queue2();
+                    input_tokens.setQ(input.split(' ')); //: string[] = input.split(' ');
                     var inStr = false;
                     var s = "";
                     var t;
-                    while (t = this.input_tokens.remove()) {
+                    while (t = input_tokens.remove()) {
                         var l = t.length;
                         if (l > 1) {
                             // check for condenced chars that should be split

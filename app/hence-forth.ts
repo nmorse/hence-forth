@@ -14,7 +14,7 @@ class Stack {
 class Queue2 {
   queue:any[] = [];
   offset:number = 0;
-  Queue2(arr) {
+  setQ (arr:any[]) {
     this.queue = arr;
   }
 
@@ -91,7 +91,8 @@ export class HenceForth {
     },
 
     // : swap @a pop @b pop #a push #b push ; ***
-    // : swap @ a pop @ b pop # a push # b push ; **
+    "swap": ["@", "a", "pop", "@", "b", "pop", "#", "a", "push", "#", "b", "push"],
+    
     "pop": function() {
       let a = this.data.pop();
       this.local_dict[this.local_var] = a;
@@ -101,10 +102,6 @@ export class HenceForth {
       this.data.push(a);
     },
     "@": function() {
-      let var_name = this.token.remove();
-      this.local_var = var_name;
-    },
-    "#": function() {
       let var_name = this.token.remove();
       this.local_var = var_name;
     },
@@ -151,11 +148,12 @@ export class HenceForth {
   user_item:Item = {name:'', words:[]};
   parse (input:string) {
     this.token = new Queue2();
-    let input_tokens = new Queue2(input.split(' '))//: string[] = input.split(' ');
+    let input_tokens = new Queue2();
+    input_tokens.setQ(input.split(' '));//: string[] = input.split(' ');
     let inStr: boolean = false;
     let s:string = "";
     let t;
-    while(t = this.input_tokens.remove()) {
+    while(t = input_tokens.remove()) {
       let l = t.length;
       if (l > 1) {
         // check for condenced chars that should be split
