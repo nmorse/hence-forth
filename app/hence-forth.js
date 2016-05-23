@@ -1,7 +1,7 @@
 System.register(['angular2/src/facade/lang'], function(exports_1) {
     "use strict";
     var lang_1;
-    var Stack, Queue2, Item, HenceForth;
+    var Stack, Queue, Item, HenceForth;
     return {
         setters:[
             function (lang_1_1) {
@@ -21,18 +21,16 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                 };
                 return Stack;
             })();
-            Queue2 = (function () {
-                function Queue2() {
+            // Queue fast offset pointer implimentation
+            Queue = (function () {
+                function Queue() {
                     this.queue = [];
                     this.offset = 0;
                 }
-                Queue2.prototype.setQ = function (arr) {
-                    this.queue = arr;
-                };
-                Queue2.prototype.add = function (item) {
+                Queue.prototype.add = function (item) {
                     this.queue.push(item);
                 };
-                Queue2.prototype.remove = function () {
+                Queue.prototype.remove = function () {
                     var len = this.queue.length;
                     if (len === 0) {
                         return undefined;
@@ -46,7 +44,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     }
                     return item;
                 };
-                Queue2.prototype.shove = function (art) {
+                Queue.prototype.shove = function (art) {
                     // press (backpress) every element of art
                     // on the queue. art is pressed in reverse order
                     var i = art.length - 1;
@@ -54,7 +52,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         this.press(art[i]);
                     }
                 };
-                Queue2.prototype.press = function (art) {
+                Queue.prototype.press = function (art) {
                     if (this.offset > 0) {
                         this.offset -= 1;
                         this.queue[this.offset] = art;
@@ -63,13 +61,16 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         this.queue.unshift(art);
                     }
                 };
-                Queue2.prototype.getLength = function () {
+                Queue.prototype.getLength = function () {
                     return (this.queue.length - this.offset);
                 };
-                Queue2.prototype.isEmpty = function () {
+                Queue.prototype.isEmpty = function () {
                     return (this.queue.length == 0);
                 };
-                return Queue2;
+                Queue.prototype.setQ = function (arr) {
+                    this.queue = arr;
+                };
+                return Queue;
             })();
             Item = (function () {
                 function Item() {
@@ -81,7 +82,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     this.stdOut = '';
                     this.stdErr = '';
                     this.dict = {
-                        "clearstack": function () {
+                        "clear": function () {
                             this.data = new Stack();
                         },
                         ":": function () {
@@ -99,7 +100,8 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
                         // : swap @a pop @b pop #a push #b push ; ***
-                        "swap": ["@", "a", "pop", "@", "b", "pop", "#", "a", "push", "#", "b", "push"],
+                        "swap": ["@", "a", "pop", "@", "b", "pop", "@", "a", "push", "@", "b", "push"],
+                        "dup": ["@", "a", "pop", "@", "a", "push", "@", "a", "push"],
                         "pop": function () {
                             var a = this.data.pop();
                             this.local_dict[this.local_var] = a;
@@ -149,13 +151,13 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     this.local_dict = {};
                     this.local_var = "temp_var_name";
                     this.data = new Stack();
-                    this.token = new Queue2();
+                    this.token = new Queue();
                     this.immediate = true;
                     this.user_item = { name: '', words: [] };
                 }
                 HenceForth.prototype.parse = function (input) {
-                    this.token = new Queue2();
-                    var input_tokens = new Queue2();
+                    this.token = new Queue();
+                    var input_tokens = new Queue();
                     input_tokens.setQ(input.split(' ')); //: string[] = input.split(' ');
                     var inStr = false;
                     var s = "";
@@ -209,14 +211,6 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         if (!this.immediate && t !== ';') {
                             this.user_item.words.push(t);
                         }
-                        else if (this.isNumeric(t)) {
-                            this.data.push(+t);
-                        }
-                        else if (this.isString(t)) {
-                            // clean the double quotes
-                            t = t.slice(1, -1);
-                            this.data.push(t);
-                        }
                         else if (t in this.dict) {
                             if (lang_1.isFunction(this.dict[t])) {
                                 this.dict[t].call(this);
@@ -230,6 +224,13 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         }
                         else {
                             // everything else goes on the stack
+                            if (this.isNumeric(t)) {
+                                t = +t;
+                            }
+                            else if (this.isString(t)) {
+                                // clean the double quotes
+                                t = t.slice(1, -1);
+                            }
                             this.data.push(t);
                         }
                     }

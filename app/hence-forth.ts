@@ -11,14 +11,12 @@ class Stack {
   }
 }
 
-class Queue2 {
+// Queue fast offset pointer implimentation
+class Queue {
   queue:any[] = [];
   offset:number = 0;
-  setQ (arr:any[]) {
-    this.queue = arr;
-  }
 
-  add (item) {
+  add (item:any) {
     this.queue.push(item);
   }
 
@@ -38,7 +36,7 @@ class Queue2 {
     }
     return item;
   }
-  shove (art) {
+  shove (art:any) {
     // press (backpress) every element of art
     // on the queue. art is pressed in reverse order
     let i = art.length - 1;
@@ -46,7 +44,7 @@ class Queue2 {
       this.press(art[i]);
     }
   }
-  press (art) {
+  press (art:any) {
     if (this.offset > 0) {
       this.offset -= 1;
       this.queue[this.offset] = art;
@@ -61,6 +59,9 @@ class Queue2 {
   isEmpty () {
     return (this.queue.length == 0);
   }
+  setQ (arr) {
+    this.queue = arr;
+  }
 }
 
 class Item {
@@ -72,7 +73,7 @@ export class HenceForth {
   stdOut:string = '';
   stdErr:string = '';
   dict: Object = {
-    "clearstack": function() {
+    "clear": function() {
       this.data  = new Stack();
     },
     ":": function() {
@@ -91,8 +92,8 @@ export class HenceForth {
     },
 
     // : swap @a pop @b pop #a push #b push ; ***
-    "swap": ["@", "a", "pop", "@", "b", "pop", "#", "a", "push", "#", "b", "push"],
-    
+    "swap": ["@", "a", "pop", "@", "b", "pop", "@", "a", "push", "@", "b", "push"],
+    "dup": ["@", "a", "pop", "@", "a", "push", "@", "a", "push"],
     "pop": function() {
       let a = this.data.pop();
       this.local_dict[this.local_var] = a;
@@ -143,12 +144,12 @@ export class HenceForth {
   local_dict: Object = {};
   local_var: string = "temp_var_name";
   data: Stack = new Stack();
-  token: Queue2 = new Queue2();
+  token: Queue = new Queue();
   immediate:boolean = true;
   user_item:Item = {name:'', words:[]};
   parse (input:string) {
-    this.token = new Queue2();
-    let input_tokens = new Queue2();
+    this.token = new Queue();
+    let input_tokens = new Queue();
     input_tokens.setQ(input.split(' '));//: string[] = input.split(' ');
     let inStr: boolean = false;
     let s:string = "";
@@ -194,7 +195,7 @@ export class HenceForth {
      return result;
   }
   run () {
-    let t = '';
+    let t:any = '';
     while(t = this.token.remove()) {
       // not "immeadiate" mode, means that we are
       // in parsing mode
@@ -203,14 +204,6 @@ export class HenceForth {
         this.user_item.words.push(t);
       }
       // from here on it's immediate mode.
-      else if (this.isNumeric(t)) {
-        this.data.push(+t);
-      }
-      else if (this.isString(t)) {
-        // clean the double quotes
-        t = t.slice(1,-1);
-        this.data.push(t);
-      }
       else if (t in this.dict) {
         if (isFunction(this.dict[t])) {
           this.dict[t].call(this);
@@ -225,6 +218,13 @@ export class HenceForth {
       }
       else {
         // everything else goes on the stack
+        if (this.isNumeric(t)) {
+          t = +t;
+        }
+        else if (this.isString(t)) {
+          // clean the double quotes
+          t = t.slice(1,-1);
+        }
         this.data.push(t);
       }
     }
