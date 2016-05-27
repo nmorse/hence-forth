@@ -158,7 +158,12 @@ System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
                         "*": function () {
                             var a = this.data.pop();
                             var b = this.data.pop();
-                            this.data.push(b * a);
+                            if (!this.isNumeric(b) && !this.isNumeric(a)) {
+                                this.data.push([b, a, '*']);
+                            }
+                            else {
+                                this.data.push(b * a);
+                            }
                         },
                         "/": function () {
                             var a = this.data.pop();

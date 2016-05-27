@@ -144,7 +144,12 @@ export class HenceForth {
     "*": function() {
       let a = this.data.pop();
       let b = this.data.pop();
-      this.data.push(b*a);
+      if (!this.isNumeric( b ) && !this.isNumeric( a )) {
+        this.data.push([b, a, '*']);
+      }
+      else {
+        this.data.push(b*a);
+      }
     },
     "/": function() {
       let a = this.data.pop();
