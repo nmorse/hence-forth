@@ -87,13 +87,19 @@ export class HenceForth {
     },
     "see": function() {
       let name = this.token.remove();
-      let method = isFunction(this.dict[name])? 'JS_function' : this.dict[name].join(' ');
+      let method = 'not defined';
+      if (method = this.dict[name]) {
+        if (isFunction(this.dict[name])) { method = 'JS_function';}
+        else if (this.dict[name].length) { method = this.dict[name].join(' ');}
+        else {method = this.dict[name];}
+      }
       this.stdOut = ': ' + name + ' ' + method + ' ;';
     },
 
     // : swap @a pop @b pop #a push #b push ; ***
     "swap": ["@", "a", "pop", "@", "b", "pop", "@", "a", "push", "@", "b", "push"],
     "dup": ["@", "a", "pop", "@", "a", "push", "@", "a", "push"],
+    "drop": ["pop"],
     "pop": function() {
       let a = this.data.pop();
       this.local_dict[this.local_var] = a;
@@ -105,6 +111,11 @@ export class HenceForth {
     "@": function() {
       let var_name = this.token.remove();
       this.local_var = var_name;
+    },
+    "=": function() {
+      let key = this.data.pop();
+      let val = this.data.pop();
+      this.dict[key] = val;
     },
 
     // : a {x:5} ; a x . yeilds 5
@@ -204,18 +215,17 @@ export class HenceForth {
         this.user_item.words.push(t);
       }
       // from here on it's immediate mode.
-      else if (t in this.dict) {
-        if (isFunction(this.dict[t])) {
+      else if (t in this.dict && isFunction(this.dict[t])) {
           this.dict[t].call(this);
-        }
-        // if this.dict[t] is an array, number or string
-        else if (this.dict[t].length) {
-          this.token.shove(this.dict[t]);
-        }
-        else {
-          this.data.push(this.dict[t]);
-        }
       }
+        // if this.dict[t] is an array, number or string
+      else if (t in this.dict && this.dict[t].length) {
+          this.token.shove(this.dict[t]);
+      }
+        //else {
+        //  this.data.push(this.dict[t]);
+        //}
+      //}
       else {
         // everything else goes on the stack
         if (this.isNumeric(t)) {

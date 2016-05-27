@@ -1,5 +1,6 @@
-System.register(['angular2/src/facade/lang'], function(exports_1) {
+System.register(['angular2/src/facade/lang'], function(exports_1, context_1) {
     "use strict";
+    var __moduleName = context_1 && context_1.id;
     var lang_1;
     var Stack, Queue, Item, HenceForth;
     return {
@@ -20,7 +21,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     return this.stack.pop();
                 };
                 return Stack;
-            })();
+            }());
             // Queue fast offset pointer implimentation
             Queue = (function () {
                 function Queue() {
@@ -71,12 +72,12 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     this.queue = arr;
                 };
                 return Queue;
-            })();
+            }());
             Item = (function () {
                 function Item() {
                 }
                 return Item;
-            })();
+            }());
             HenceForth = (function () {
                 function HenceForth() {
                     this.stdOut = '';
@@ -96,12 +97,24 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         },
                         "see": function () {
                             var name = this.token.remove();
-                            var method = lang_1.isFunction(this.dict[name]) ? 'JS_function' : this.dict[name].join(' ');
+                            var method = 'not defined';
+                            if (method = this.dict[name]) {
+                                if (lang_1.isFunction(this.dict[name])) {
+                                    method = 'JS_function';
+                                }
+                                else if (this.dict[name].length) {
+                                    method = this.dict[name].join(' ');
+                                }
+                                else {
+                                    method = this.dict[name];
+                                }
+                            }
                             this.stdOut = ': ' + name + ' ' + method + ' ;';
                         },
                         // : swap @a pop @b pop #a push #b push ; ***
                         "swap": ["@", "a", "pop", "@", "b", "pop", "@", "a", "push", "@", "b", "push"],
                         "dup": ["@", "a", "pop", "@", "a", "push", "@", "a", "push"],
+                        "drop": ["pop"],
                         "pop": function () {
                             var a = this.data.pop();
                             this.local_dict[this.local_var] = a;
@@ -113,6 +126,11 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         "@": function () {
                             var var_name = this.token.remove();
                             this.local_var = var_name;
+                        },
+                        "=": function () {
+                            var key = this.data.pop();
+                            var val = this.data.pop();
+                            this.dict[key] = val;
                         },
                         // : a {x:5} ; a x . yeilds 5
                         ".": function () {
@@ -211,16 +229,11 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                         if (!this.immediate && t !== ';') {
                             this.user_item.words.push(t);
                         }
-                        else if (t in this.dict) {
-                            if (lang_1.isFunction(this.dict[t])) {
-                                this.dict[t].call(this);
-                            }
-                            else if (this.dict[t].length) {
-                                this.token.shove(this.dict[t]);
-                            }
-                            else {
-                                this.data.push(this.dict[t]);
-                            }
+                        else if (t in this.dict && lang_1.isFunction(this.dict[t])) {
+                            this.dict[t].call(this);
+                        }
+                        else if (t in this.dict && this.dict[t].length) {
+                            this.token.shove(this.dict[t]);
                         }
                         else {
                             // everything else goes on the stack
@@ -260,7 +273,7 @@ System.register(['angular2/src/facade/lang'], function(exports_1) {
                     return e;
                 };
                 return HenceForth;
-            })();
+            }());
             exports_1("HenceForth", HenceForth);
         }
     }
